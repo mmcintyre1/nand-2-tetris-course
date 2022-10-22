@@ -62,7 +62,8 @@ CHIP ALU {
     Mux16(a=fOut, b=noNotOut, sel=no, out=out, out[15]=negCheck, out[0..15]=zeroCheck);
 
     // zr
-    Or16Way(in=zeroCheck, out=isZero);
+    // alternatively, we could use a 16 way nor gate to abstract the Not gate
+    Or16Way(in=zeroCheck, out=isZero); // had to implement this chip
     Not(in=isZero, out=zr);
 
     // ng
