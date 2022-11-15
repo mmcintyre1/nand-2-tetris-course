@@ -40,31 +40,58 @@ CHIP CPU {
 
     PARTS:
     // A or C instruction
-    Not(in=instruction[15], out=isAInstruction);
+    Not(in=instruction[15], out=isAInst);
+    Not(in=isAInst, out=isCInst);
 
     // choose ALU output or instruction to set A
-    Mux16(a=instruction, b=aluBackIn, sel=isAInstruction, out=toARegister);
+    Mux16(a=aluBackIn, b=instruction, sel=isAInst, out=toARegister);
 
     // write to A register if A instruction OR first destination bit == 1
-    Or(a=isAInstruction, b=instruction[5], out=setA);
+    Or(a=isAInst, b=instruction[5], out=setA);
 
     // write to D register if second destination bit is 1 and not A instruction
-    And(a=instruction[15], b=instruction[4], out=setD);
+    And(a=isCInst, b=instruction[4], out=setD);
 
     // registers
-    ARegister(in=toA, load=setA, out=outA, out[0..14]=addressM, out=toPC);
-    DRegister(in=aluOut, load=setD, out=outD);
+    ARegister(in=toARegister, load=setA, out=outA, out[0..14]=addressM, out=toPC);
+    DRegister(in=aluBackIn, load=setD, out=outD);
 
     // if a==1 and A instruction, then use A, if not, use M for ALU x input
-    And(a=instruction[15], b=instruction[12], out=aOrM);
-    Mux16(a=inM, b=outA, sel=aOrM, out=aMuxOut);
+    And(a=isCInst, b=instruction[12], out=aOrM);
+    Mux16(a=outA, b=inM, sel=aOrM, out=aMuxOut);
 
-    ALU(x=outD, y=aMuxOut, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=outM, out=aluOut, zr=zr, ng=ng);
+    ALU(
+        x=outD,
+        y=aMuxOut,
+        zx=instruction[11],
+        nx=instruction[10],
+        zy=instruction[9],
+        ny=instruction[8],
+        f=instruction[7],
+        no=instruction[6],
+        out=outM,
+        out=aluBackIn,
+        zr=zr,
+        ng=ng
+    );
 
-    // set outM == 1 if C instruction and destination bit set
-    And(a=instruction[15], b=instruction[3], out=outM)
+    // set writetM == 1 if C instruction and destination bit set
+    And(a=instruction[15], b=instruction[3], out=writeM);
+
+    // jump logic
+    Not(in=ng, out=ge); // output >= 0
+    Not(in=zr, out=nz); // output != 0
+    And(a=ge, b=nz, out=pos); // output > 0
+
+    And(a=instruction[0], b=pos, out=jmp0);
+    And(a=instruction[1], b=zr, out=jmp1);
+    And(a=instruction[2], b=ng, out=jmp2);
+
+    Or(a=jmp0, b=jmp1, out=jmp1Or2);
+    Or(a=jmp1Or2, b=jmp2, out=jmp1Or2Or3);
+    And(a=isCInst, b=jmp1Or2Or3, out=jmp); // don't jump if A instruction
 
     // PC
-
-    PC(in=toPC, load=, inc=true, reset=reset, out=pc);
+    // increment is always true because of conditional logic
+    PC(in=toPC, load=jmp, inc=true, reset=reset, out[0..14]=pc);
 }
