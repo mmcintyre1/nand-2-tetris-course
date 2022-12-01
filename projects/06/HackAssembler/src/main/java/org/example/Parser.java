@@ -1,7 +1,6 @@
 package org.example;
 
 import java.util.List;
-import java.util.Objects;
 
 public class Parser {
     private final List<String> instructions;
@@ -13,7 +12,7 @@ public class Parser {
     }
 
     public void advance() {
-        if (!hasMoreInstructions()) this.currentInstructionIndex++;
+        if (hasMoreInstructions()) this.currentInstructionIndex++;
     }
 
     public Boolean hasMoreInstructions() {
@@ -38,16 +37,26 @@ public class Parser {
 
     String dest() {
         if (!this.instructionType().equals("C")) return null;
-        return "";
+        String currentInst = this.instructions.get(this.currentInstructionIndex);
+        if (!currentInst.contains("=")) return null;
+        return currentInst.split("=")[0];
     }
 
     String comp() {
         if (!this.instructionType().equals("C")) return null;
-        return "";
+        String currentInst = this.instructions.get(this.currentInstructionIndex);
+        // factor in whether there is an equals sign or not
+        int start = 0;
+        if (currentInst.contains("=")) start = currentInst.indexOf("=") + 1;
+        int end = currentInst.length();
+        if (currentInst.contains(";")) end = currentInst.indexOf(";");
+        return currentInst.substring(start, end);
     }
 
     String jump() {
         if (!this.instructionType().equals("C")) return null;
-        return "";
+        String currentInst = this.instructions.get(this.currentInstructionIndex);
+        if (!currentInst.contains(";")) return null;
+        return currentInst.substring(currentInst.indexOf(";") + 1);
     }
 }
