@@ -1,6 +1,9 @@
 package org.example;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException {
@@ -9,7 +12,8 @@ public class Main {
             System.exit(0);
         }
         String filename = args[0];
-        HackAssembler ha = new HackAssembler();
-        ha.run(filename);
+        List<String> rawInstructions = Files.readAllLines(Paths.get(filename));
+        HackAssembler ha = new HackAssembler(rawInstructions);
+        ha.run();
     }
 }

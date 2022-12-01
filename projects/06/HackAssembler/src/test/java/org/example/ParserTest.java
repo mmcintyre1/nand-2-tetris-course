@@ -12,14 +12,45 @@ class ParserTest {
 
     @Test
     void advance() {
+        List<String> instructions = new ArrayList<>();
+        instructions.add("@sum");
+        instructions.add("@R0");
+
+        Parser p = new Parser(instructions);
+        assertEquals(p.getInstruction(), "@sum");
+        p.advance();
+        assertEquals(p.getInstruction(), "@R0");
+        p.advance();
+        assertFalse(p.hasMoreInstructions());
     }
 
     @Test
     void hasMoreInstructions() {
+        List<String> instructions = new ArrayList<>();
+        instructions.add("@sum");
+        instructions.add("D;JGT");
+
+        Parser p = new Parser(instructions);
+        assertTrue(p.hasMoreInstructions());
+        p.advance();
+        assertTrue(p.hasMoreInstructions());
+        p.advance();
+        assertFalse(p.hasMoreInstructions());
     }
 
     @Test
     void instructionType() {
+        List<String> instructions = new ArrayList<>();
+        instructions.add("@sum");
+        instructions.add("D;JGT");
+        instructions.add("(LOOP)");
+
+        Parser p = new Parser(instructions);
+        assertEquals(p.instructionType(), "A");
+        p.advance();
+        assertEquals(p.instructionType(), "C");
+        p.advance();
+        assertEquals(p.instructionType(), "L");
     }
 
     @Test

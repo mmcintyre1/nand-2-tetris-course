@@ -4,11 +4,19 @@ import java.util.List;
 
 public class Parser {
     private final List<String> instructions;
-    Integer currentInstructionIndex;
+    private Integer currentInstructionIndex;
 
     Parser(List<String> instructions) {
         currentInstructionIndex = 0;
         this.instructions = instructions;
+    }
+
+    public void reset() {
+        this.currentInstructionIndex = 0;
+    }
+
+    public String getInstruction () {
+        return this.instructions.get(this.currentInstructionIndex);
     }
 
     public void advance() {
@@ -17,46 +25,43 @@ public class Parser {
 
     public Boolean hasMoreInstructions() {
         return this.currentInstructionIndex < this.instructions.size();
-
     }
 
     public String instructionType() {
-        String rawInst = this.instructions.get(this.currentInstructionIndex);
-        return switch (rawInst.substring(0, 1)) {
+        return switch (getInstruction().substring(0, 1)) {
             case "@" -> "A";
             case "(" -> "L";
             default -> "C";
         };
-
     }
 
-    String symbol() {
-        if (!this.instructionType().equals("A")) return null;
-        return this.instructions.get(this.currentInstructionIndex).substring(1);
+    public String symbol() {
+        return switch(instructionType()) {
+            case "A" -> getInstruction().substring(1);
+            case "L" -> getInstruction().substring(getInstruction().indexOf("(") + 1, getInstruction().indexOf(")"));
+            default -> null;
+        };
     }
 
-    String dest() {
+    public String dest() {
         if (!this.instructionType().equals("C")) return null;
-        String currentInst = this.instructions.get(this.currentInstructionIndex);
-        if (!currentInst.contains("=")) return null;
-        return currentInst.split("=")[0];
+        if (!getInstruction().contains("=")) return null;
+        return getInstruction().split("=")[0];
     }
 
-    String comp() {
+    public String comp() {
         if (!this.instructionType().equals("C")) return null;
-        String currentInst = this.instructions.get(this.currentInstructionIndex);
         // factor in whether there is an equals sign or not
         int start = 0;
-        if (currentInst.contains("=")) start = currentInst.indexOf("=") + 1;
-        int end = currentInst.length();
-        if (currentInst.contains(";")) end = currentInst.indexOf(";");
-        return currentInst.substring(start, end);
+        if (getInstruction().contains("=")) start = getInstruction().indexOf("=") + 1;
+        int end = getInstruction().length();
+        if (getInstruction().contains(";")) end = getInstruction().indexOf(";");
+        return getInstruction().substring(start, end);
     }
 
-    String jump() {
+    public String jump() {
         if (!this.instructionType().equals("C")) return null;
-        String currentInst = this.instructions.get(this.currentInstructionIndex);
-        if (!currentInst.contains(";")) return null;
-        return currentInst.substring(currentInst.indexOf(";") + 1);
+        if (!getInstruction().contains(";")) return null;
+        return getInstruction().substring(getInstruction().indexOf(";") + 1);
     }
 }
