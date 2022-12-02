@@ -15,5 +15,6 @@ public class Main {
         List<String> rawInstructions = Files.readAllLines(Paths.get(filename));
         HackAssembler ha = new HackAssembler(rawInstructions);
         ha.run();
+        System.out.println("done");
     }
 }

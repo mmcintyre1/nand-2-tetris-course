@@ -29,7 +29,6 @@ public class SymbolTable {
 
     Integer get(String symbol) {
         if (!this.contains(symbol)) {
-            System.err.println("symbol not in table");
             return null;
         } else {
             return st.get(symbol);
@@ -37,9 +36,7 @@ public class SymbolTable {
     }
 
     void put(String symbol, int memoryLocation) {
-        if (this.contains(symbol)) {
-            System.err.println("symbol already in symbol table");
-        } else {
+        if (!this.contains(symbol)) {
             st.put(symbol, memoryLocation);
         }
     }

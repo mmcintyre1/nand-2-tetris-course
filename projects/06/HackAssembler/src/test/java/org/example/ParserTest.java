@@ -11,7 +11,7 @@ class ParserTest {
 
 
     @Test
-    void advance() {
+    void testAdvance() {
         List<String> instructions = new ArrayList<>();
         instructions.add("@sum");
         instructions.add("@R0");
@@ -25,7 +25,7 @@ class ParserTest {
     }
 
     @Test
-    void hasMoreInstructions() {
+    void testHasMoreInstructions() {
         List<String> instructions = new ArrayList<>();
         instructions.add("@sum");
         instructions.add("D;JGT");
@@ -39,7 +39,7 @@ class ParserTest {
     }
 
     @Test
-    void instructionType() {
+    void testInstructionType() {
         List<String> instructions = new ArrayList<>();
         instructions.add("@sum");
         instructions.add("D;JGT");
@@ -54,7 +54,7 @@ class ParserTest {
     }
 
     @Test
-    void symbol() {
+    void testSymbol() {
         List<String> instructions = new ArrayList<>();
         instructions.add("@sum");
         instructions.add("@R0");
@@ -70,7 +70,7 @@ class ParserTest {
     }
 
     @Test
-    void dest() {
+    void testDest() {
         List<String> instructions = new ArrayList<>();
         instructions.add("D;JGT");
         instructions.add("D=D-M");
@@ -85,7 +85,7 @@ class ParserTest {
     }
 
     @Test
-    void comp() {
+    void testComp() {
         List<String> instructions = new ArrayList<>();
         instructions.add("D;JGT");
         instructions.add("D=D-M");
@@ -100,7 +100,7 @@ class ParserTest {
     }
 
     @Test
-    void jump() {
+    void testJump() {
         List<String> instructions = new ArrayList<>();
         instructions.add("D;JGT");
         instructions.add("D=D-M");

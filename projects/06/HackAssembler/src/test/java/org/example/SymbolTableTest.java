@@ -7,7 +7,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class SymbolTableTest {
 
     @Test
-    void contains() {
+    void testContains() {
         SymbolTable st = new SymbolTable();
         st.put("TEST1", 15);
         st.put("TEST2", 16);
@@ -18,10 +18,10 @@ class SymbolTableTest {
     }
 
     @Test
-    void get() {
+    void testGet() {
     }
 
     @Test
-    void insert() {
+    void testInsert() {
     }
 }
